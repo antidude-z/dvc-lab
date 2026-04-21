@@ -39,10 +39,7 @@ stages:
       - mlflow/best_model/model
   deploy:
     cmd: bash docker/deploy.sh
-    deps:
-      - mlflow/best_model/model
   healthcheck:
     cmd: python src/health_check.py
     deps:
       - src/health_check.py
-      - mlflow/best_model/model

@@ -25,8 +25,7 @@ mlflow.set_tracking_uri("sqlite:///mlflow/mlflow.db")
 model_grid = {
     "LogisticRegression": {
         "model": LogisticRegression(max_iter=10000, random_state=42),
-        "param_grid": {"C": [0.1, 0.3, 0.8, 2.0]},
-        "flavor": "sklearn",
+        "param_grid": {"C": [0.1, 0.3, 0.8, 2.0]}
     },
     "RandomForest": {
         "model": RandomForestClassifier(random_state=42, n_jobs=-1),
@@ -34,8 +33,7 @@ model_grid = {
             "n_estimators": [400, 800],
             "max_depth": [12, 18, None],
             "min_samples_leaf": [1, 2],
-        },
-        "flavor": "sklearn",
+        }
     },
 }
 
@@ -95,7 +93,7 @@ def train():
                 param_grid=cfg["param_grid"],
                 cv=cv,
                 scoring="roc_auc",
-                n_jobs=-1 if cfg["flavor"] == "sklearn" else 1,
+                n_jobs=-1,
                 verbose=1,
             )
 
@@ -115,7 +113,7 @@ def train():
             mlflow.log_params(grid.best_params_)
             mlflow.log_metrics(metrics)
 
-            getattr(mlflow, cfg["flavor"]).log_model(
+            mlflow.sklearn.log_model(
                 best_model,
                 name="model",
                 signature=signature,

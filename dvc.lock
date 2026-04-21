@@ -85,12 +85,12 @@ stages:
       size: 7085
     - path: src/train_model.py
       hash: md5
-      md5: 04b55933e491f61ffcbc8cdaada3f70a
-      size: 4736
+      md5: 1fbe015893d4571e100754f94b73d127
+      size: 4623
     outs:
     - path: mlflow/best_model
       hash: md5
-      md5: 346cb0803f3a808dfcf23ead997f301d.dir
+      md5: a19238e315e96a358ccc1cb4b79c2804.dir
       size: 73645
       nfiles: 7
   build_image:
@@ -106,25 +106,14 @@ stages:
       size: 1478
     - path: mlflow/best_model/model
       hash: md5
-      md5: 96283960eb5b1f7d8e0887ce754b66a6.dir
+      md5: 99e9345b256a531bba4c38b681e2a8e1.dir
       size: 73645
       nfiles: 7
   deploy:
     cmd: bash docker/deploy.sh
-    deps:
-    - path: mlflow/best_model/model
-      hash: md5
-      md5: 96283960eb5b1f7d8e0887ce754b66a6.dir
-      size: 73645
-      nfiles: 7
   healthcheck:
     cmd: python src/health_check.py
     deps:
-    - path: mlflow/best_model/model
-      hash: md5
-      md5: 96283960eb5b1f7d8e0887ce754b66a6.dir
-      size: 73645
-      nfiles: 7
     - path: src/health_check.py
       hash: md5
       md5: d107b28bdcacee5640b3261dfde9d622
