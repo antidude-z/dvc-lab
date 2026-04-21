@@ -6,3 +6,4 @@
 /X_train_fe.csv
 /y_train_fe.csv
 /y_test_fe.csv
+/model.pkl

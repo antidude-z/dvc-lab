@@ -5,7 +5,23 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
-    "mlflow>=3.11.1",
+    "requests>=2.33.1",
     "scikit-learn>=1.8.0",
     "ucimlrepo>=0.0.7",
 ]
+
+[tool.uv]
+package = true
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "F",   # Pyflakes (errors)
+    "UP",  # pyupgrade (modernize code for newer Python)
+    "B",   # flake8-bugbear (common bugs and security issues)
+    "SIM", # flake8-simplify (simplify code)
+    "I",   # isort (import sorting),
+    "W",
+    "C901"
+]
+ignore = []

@@ -1,4 +1,5 @@
 import json
+
 import numpy as np
 import pandas as pd
 import requests
@@ -19,36 +20,30 @@ def main():
     X_sample = X_test.loc[sample_idx].copy()
     y_sample = y_test.loc[sample_idx]
 
-    data_payload = {"inputs": X_sample.to_dict(orient="records")}
-
-    print("\nОтправляем запрос в MLflow модель...")
-
-    response = requests.post(
-        "http://localhost:8080/invocations",
-        headers={"Content-Type": "application/json"},
-        data=json.dumps(data_payload),
-    )
-    response.raise_for_status()
-    preds = response.json()["predictions"]
-
-    print("\nРезультаты предсказаний:")
-    print("-" * 50)
+    print("\nОтправляем запрос в FastAPI модель...")
 
     correct = 0
-    for i, (idx, _row) in enumerate(X_sample.iterrows()):
+
+    for i, (idx, row) in enumerate(X_sample.iterrows()):
+        data_payload = {"input": row.tolist()}
+
+        response = requests.post(
+            "http://localhost:8080/predict",
+            headers={"Content-Type": "application/json"},
+            data=json.dumps(data_payload),
+        )
+        response.raise_for_status()
+
+        pred = response.json()["prediction"][0]
+
         true_ans = y_sample.loc[idx]
-        pred = preds[i]
 
         if true_ans == pred:
             correct += 1
 
-        print(
-            f"Пример {i + 1:2d} | "
-            f"Истинный: {y_sample.loc[idx]:10} | "
-            f"Предсказание: {preds[i]}"
-        )
+        print(f"Пример {i + 1:2d} | Истинный: {true_ans:10} | Предсказание: {pred}")
 
-    print(f"Верных предсказаний: {correct * 100 / SAMPLE_COUNT}%")
+    print(f"\nВерных предсказаний: {correct * 100 / SAMPLE_COUNT:.2f}%")
 
 
 if __name__ == "__main__":

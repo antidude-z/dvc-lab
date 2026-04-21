@@ -13,32 +13,29 @@ stages:
     deps:
     - data/X_test.csv
     - data/X_train.csv
-    - data/y_train.csv
-    - data/y_test.csv
     - src/featurize.py
     outs:
     - data/X_test_fe.csv
     - data/X_train_fe.csv
-    - data/y_train_fe.csv
-    - data/y_test_fe.csv
   train:
     cmd: python src/train_model.py
     deps:
     - src/train_model.py
     - data/X_test_fe.csv
     - data/X_train_fe.csv
-    - data/y_test_fe.csv
-    - data/y_train_fe.csv
+    - data/y_test.csv
+    - data/y_train.csv
     outs:
-    - mlflow/best_model
+    - data/model.pkl
   build_image:
     cmd: docker build -t student-dropout-model -f ./docker/Dockerfile .
     deps:
       - docker/Dockerfile
-      - docker/requirements.txt
-      - mlflow/best_model/model
+      - data/model.pkl
   deploy:
     cmd: bash docker/deploy.sh
+    deps:
+      - docker/deploy.sh
   healthcheck:
     cmd: python src/health_check.py
     deps:

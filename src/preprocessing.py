@@ -2,6 +2,7 @@ import pandas as pd
 from sklearn.model_selection import train_test_split
 from ucimlrepo import fetch_ucirepo
 
+
 def main():
     # 1. Загрузка данных
     dataset = fetch_ucirepo(id=697)
@@ -21,6 +22,7 @@ def main():
     X_test.to_csv("data/X_test.csv", index=False)
     pd.DataFrame(y_train, columns=["Target"]).to_csv("data/y_train.csv", index=False)
     pd.DataFrame(y_test, columns=["Target"]).to_csv("data/y_test.csv", index=False)
+
 
 if __name__ == "__main__":
     main()
