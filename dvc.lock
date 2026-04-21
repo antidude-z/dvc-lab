@@ -1,0 +1,131 @@
+schema: '2.0'
+stages:
+  preprocess:
+    cmd: python src/preprocessing.py
+    deps:
+    - path: src/preprocessing.py
+      hash: md5
+      md5: 842fe2591da5154ccdb6afd43cc67fe1
+      size: 884
+    outs:
+    - path: data/X_test.csv
+      hash: md5
+      md5: e5589617e7959e9fa97cec3e8cb57d11
+      size: 94925
+    - path: data/X_train.csv
+      hash: md5
+      md5: e283182fba8a495d685355c81e23c7b5
+      size: 375517
+    - path: data/y_test.csv
+      hash: md5
+      md5: 29bb03fb6af3690493050e4b630bc94a
+      size: 1777
+    - path: data/y_train.csv
+      hash: md5
+      md5: f1bb4e4dce592ebe6596f302d833da3b
+      size: 7085
+  feature_engineering:
+    cmd: python src/featurize.py
+    deps:
+    - path: data/X_test.csv
+      hash: md5
+      md5: e5589617e7959e9fa97cec3e8cb57d11
+      size: 94925
+    - path: data/X_train.csv
+      hash: md5
+      md5: e283182fba8a495d685355c81e23c7b5
+      size: 375517
+    - path: data/y_test.csv
+      hash: md5
+      md5: 29bb03fb6af3690493050e4b630bc94a
+      size: 1777
+    - path: data/y_train.csv
+      hash: md5
+      md5: f1bb4e4dce592ebe6596f302d833da3b
+      size: 7085
+    - path: src/featurize.py
+      hash: md5
+      md5: 6da140ee3d22968f3b0a39cd5cd40cc4
+      size: 3002
+    outs:
+    - path: data/X_test_fe.csv
+      hash: md5
+      md5: 7812070e238e0b5b5ca2692825459db1
+      size: 1218972
+    - path: data/X_train_fe.csv
+      hash: md5
+      md5: f67a602dc3dbb135f82b1dcf114e426d
+      size: 5848741
+    - path: data/y_test_fe.csv
+      hash: md5
+      md5: 29bb03fb6af3690493050e4b630bc94a
+      size: 1777
+    - path: data/y_train_fe.csv
+      hash: md5
+      md5: f1bb4e4dce592ebe6596f302d833da3b
+      size: 7085
+  train:
+    cmd: python src/train_model.py
+    deps:
+    - path: data/X_test_fe.csv
+      hash: md5
+      md5: 7812070e238e0b5b5ca2692825459db1
+      size: 1218972
+    - path: data/X_train_fe.csv
+      hash: md5
+      md5: f67a602dc3dbb135f82b1dcf114e426d
+      size: 5848741
+    - path: data/y_test_fe.csv
+      hash: md5
+      md5: 29bb03fb6af3690493050e4b630bc94a
+      size: 1777
+    - path: data/y_train_fe.csv
+      hash: md5
+      md5: f1bb4e4dce592ebe6596f302d833da3b
+      size: 7085
+    - path: src/train_model.py
+      hash: md5
+      md5: 04b55933e491f61ffcbc8cdaada3f70a
+      size: 4736
+    outs:
+    - path: mlflow/best_model
+      hash: md5
+      md5: 346cb0803f3a808dfcf23ead997f301d.dir
+      size: 73645
+      nfiles: 7
+  build_image:
+    cmd: docker build -t student-dropout-model -f ./docker/Dockerfile .
+    deps:
+    - path: docker/Dockerfile
+      hash: md5
+      md5: 9e3185fe635d0ff222b34b155cc4a168
+      size: 396
+    - path: docker/requirements.txt
+      hash: md5
+      md5: 8dc34c866e1ae33e71f6e8dc82e6cce2
+      size: 1478
+    - path: mlflow/best_model/model
+      hash: md5
+      md5: 96283960eb5b1f7d8e0887ce754b66a6.dir
+      size: 73645
+      nfiles: 7
+  deploy:
+    cmd: bash docker/deploy.sh
+    deps:
+    - path: mlflow/best_model/model
+      hash: md5
+      md5: 96283960eb5b1f7d8e0887ce754b66a6.dir
+      size: 73645
+      nfiles: 7
+  healthcheck:
+    cmd: python src/health_check.py
+    deps:
+    - path: mlflow/best_model/model
+      hash: md5
+      md5: 96283960eb5b1f7d8e0887ce754b66a6.dir
+      size: 73645
+      nfiles: 7
+    - path: src/health_check.py
+      hash: md5
+      md5: d107b28bdcacee5640b3261dfde9d622
+      size: 1450
